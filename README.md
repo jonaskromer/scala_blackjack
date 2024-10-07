@@ -1,8 +1,22 @@
-## sbt project compiled with Scala 3
+# Scala Blackjack
 
-### Usage
+Welcome to **Scala Blackjack**, a console-based simulation of the popular card game Blackjack.
 
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
+## Rules
 
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
+- The goal is to get a hand value as close to 21 as possible without exceeding it.
+- Number cards (2-10) are worth their face value.
+- Face cards (Jack, Queen, King) are worth 10 points.
+- Aces can be worth either 1 or 11 points, whichever is more beneficial to the player.
+- The dealer will hit (draw a card) until their hand totals 17 or more points.
+- If the player's hand exceeds 21, they "bust" and lose the round.
+- If both the player and the dealer stand (stop drawing cards), the hand closest to 21 wins.
+
+## Technologies
+
+- **Scala**: The primary programming language used.
+- **sbt (Scala Build Tool)**: For compiling and running the project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
