@@ -129,3 +129,18 @@ val cardDeck = Deck(Nil).createShuffledDeck()
 println("Your First Card:")
 drawCardsFromDeck(cardDeck, 1)
 
+
+def draw: Option[(Card, Deck)] = cards match
+  case Nil => None // If deck is empty, return None
+  case head :: tail => Some(head, Deck(tail)) // Draw the top card and return it with the rest of the deck
+
+def drawAndDisplay(): Deck =
+  draw match {
+    case Some((card, remainingDeck)) =>
+      println(s"Drawn Card: $card")
+      println(s"Remaining Cards: ${remainingDeck.cards.size}")
+      remainingDeck // Rückgabe des verbleibenden Decks
+    case None =>
+      println("No cards left!")
+      this // Gibt das aktuelle Deck zurück, wenn keine Karten mehr vorhanden sind
+  }
