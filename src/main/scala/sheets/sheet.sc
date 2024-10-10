@@ -1,5 +1,5 @@
-import scala.util.Random
 import scala.io.StdIn.readLine
+import scala.util.Random
 
 enum Suit:
   case Hearts, Diamonds, Clubs, Spades
