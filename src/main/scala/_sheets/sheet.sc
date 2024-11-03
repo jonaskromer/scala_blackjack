@@ -1,3 +1,5 @@
+import model.*
+
 import scala.io.StdIn.readLine
 import scala.util.Random
 
@@ -5,31 +7,31 @@ enum Suit:
   case Hearts, Diamonds, Clubs, Spades
 
 enum Rank(val value: Int):
-  case Two extends Rank(2)
-  case Three extends Rank(3)
-  case Four extends Rank(4)
-  case Five extends Rank(5)
-  case Six extends Rank(6)
-  case Seven extends Rank(7)
-  case Eight extends Rank(8)
-  case Nine extends Rank(9)
-  case Ten extends Rank(10)
-  case Jack extends Rank(10)
-  case Queen extends Rank(10)
-  case King extends Rank(10)
-  case Ace extends Rank(11) // later eval in hand if counts 1 or 11
+  case Two extends model.Rank(2)
+  case Three extends model.Rank(3)
+  case Four extends model.Rank(4)
+  case Five extends model.Rank(5)
+  case Six extends model.Rank(6)
+  case Seven extends model.Rank(7)
+  case Eight extends model.Rank(8)
+  case Nine extends model.Rank(9)
+  case Ten extends model.Rank(10)
+  case Jack extends model.Rank(10)
+  case Queen extends model.Rank(10)
+  case King extends model.Rank(10)
+  case Ace extends model.Rank(11) // later eval in hand if counts 1 or 11
 
 
-case class Card(rank: Rank, suit: Suit):
+case class Card(rank: model.Rank, suit: model.Suit):
   override def toString = s"$rank of $suit, Value: ${rank.value}"
 
-case class Deck(cards: List[Card]) {
+case class Deck(cards: List[model.Card]) {
   // Method to create a shuffled deck with an optional seed
-  def createShuffledDeck(seed: Option[Long] = None): Deck = {
+  def createShuffledDeck(seed: Option[Long] = None): model.Deck = {
     val allCards = for {
       suit <- List(Suit.Spades, Suit.Hearts, Suit.Diamonds, Suit.Clubs)
       rank <- Rank.values.toList
-    } yield Card(rank, suit)
+    } yield model.Card(rank, suit)
 
     // Create a Random instance with the provided seed
     val random = seed match {
@@ -37,20 +39,20 @@ case class Deck(cards: List[Card]) {
       case None    => new Random()    // Create a Random object without a seed
     }
 
-    Deck(random.shuffle(allCards))  // Shuffle the cards and return a new Deck
+    model.Deck(random.shuffle(allCards))  // Shuffle the cards and return a new Deck
   }
 
   // Function to draw a card from the deck
-  def draw: Option[(Card, Deck)] = cards match {
+  def draw: Option[(model.Card, model.Deck)] = cards match {
     case Nil => None  // If deck is empty, return None
-    case head :: tail => Some(head, Deck(tail))  // Draw the top card and return it with the rest of the deck
+    case head :: tail => Some(head, model.Deck(tail))  // Draw the top card and return it with the rest of the deck
   }
 }
 
-val d1 = Deck(Nil).createShuffledDeck()
+val d1 = model.Deck(Nil).createShuffledDeck()
 
 // Function to draw a number of cards from the deck
-def drawCardsFromDeck(deck: Deck, numberOfCards: Int): Unit = {
+def drawCardsFromDeck(deck: model.Deck, numberOfCards: Int): Unit = {
   var currentDeck = deck // Use a mutable variable to keep track of the current deck
 
   println("Drawing cards from the deck:")
@@ -73,20 +75,20 @@ drawCardsFromDeck(d1,2)
 
 
 // Method to create a full deck of cards
-def createDeck(): List[Card] =
+def createDeck(): List[model.Card] =
   for {
     suit <- List(Suit.Spades, Suit.Hearts, Suit.Diamonds, Suit.Clubs)  // Step 1: Iterate over each Suit
     rank <- Rank.values.toList                                          // Step 2: Iterate over each Rank
-  } yield Card(rank, suit)                                              // Step 3: Yield a Card combining each Rank with each Suit
+  } yield model.Card(rank, suit)                                              // Step 3: Yield a Card combining each Rank with each Suit
 
-def shuffleDeck(deck:List[Card]): List[Card] = Random().shuffle(deck)
+def shuffleDeck(deck:List[model.Card]): List[model.Card] = Random().shuffle(deck)
 
 
 val pile = createDeck()
 shuffleDeck(pile)
 
 
-case class Hand(cards: List[Card]):
+case class Hand(cards: List[model.Card]):
   // Method to calculate total hand value
   def totalValue: Int =
     // Count number of Aces in the hand
@@ -102,21 +104,20 @@ case class Hand(cards: List[Card]):
     initialValue // Return if no ace spawned
 
   override def toString: String = s"$cards, \n Total Value: $totalValue"
-  //TODO ADD FUNC
 
 
-val aCard = Card(Rank.Two, Suit.Hearts)
-val aceCard = Card(Rank.Ace, Suit.Spades)
-val anotherAce = Card(Rank.Ace, Suit.Clubs)
-val aSecondCard = Card(Rank.King, Suit.Diamonds)
-val aNineCard = Card(Rank.Nine, Suit.Clubs)
+val aCard = model.Card(Rank.Two, Suit.Hearts)
+val aceCard = model.Card(Rank.Ace, Suit.Spades)
+val anotherAce = model.Card(Rank.Ace, Suit.Clubs)
+val aSecondCard = model.Card(Rank.King, Suit.Diamonds)
+val aNineCard = model.Card(Rank.Nine, Suit.Clubs)
 
 val cardList = List(aCard, aceCard, anotherAce, aSecondCard)
 val blackjackList = List(aceCard, aSecondCard)
 
 
-val playerHand = Hand(cardList)
-val jackpotHand = Hand(blackjackList)
+val playerHand = model.Hand(cardList)
+val jackpotHand = model.Hand(blackjackList)
 
 println("This is TUI-Blackjack")
 
@@ -124,17 +125,17 @@ val name = readLine("Enter you Name: ")
 
 println(s"Welcome $name!")
 
-val cardDeck = Deck(Nil).createShuffledDeck()
+val cardDeck = model.Deck(Nil).createShuffledDeck()
 
 println("Your First Card:")
 drawCardsFromDeck(cardDeck, 1)
 
 
-def draw: Option[(Card, Deck)] = cards match
+def draw: Option[(model.Card, model.Deck)] = cards match
   case Nil => None // If deck is empty, return None
   case head :: tail => Some(head, Deck(tail)) // Draw the top card and return it with the rest of the deck
 
-def drawAndDisplay(): Deck =
+def drawAndDisplay(): model.Deck =
   draw match {
     case Some((card, remainingDeck)) =>
       println(s"Drawn Card: $card")

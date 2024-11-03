@@ -20,3 +20,6 @@ Wallet:
   Extract cash
 
 Win-Loose History
+
+
+Runde

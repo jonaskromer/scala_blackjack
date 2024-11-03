@@ -1,3 +1,5 @@
+package model
+
 enum Suit:
   case Hearts, Diamonds, Clubs, Spades
 
@@ -18,6 +20,4 @@ enum Rank(val value: Int):
 
 
 case class Card(rank: Rank, suit: Suit):
-  override def toString = s"$rank of $suit, |Value: ${rank.value}|"
-
-val card1 = Card(Rank.Jack, Suit.Diamonds)
+  override def toString = s"$rank of $suit, Value: ${rank.value}"

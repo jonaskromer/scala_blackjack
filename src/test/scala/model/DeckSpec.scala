@@ -1,3 +1,6 @@
+package model
+
+import model.{Card, Deck, Rank, Suit}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -28,7 +31,7 @@ class DeckSpec extends AnyWordSpec with Matchers {
       val updatedDeck = deck.draw()
 
       // Deckgröße sollte um 1 verringert sein
-      updatedDeck.cards.size shouldEqual (originalSize - 1)
+      updatedDeck._2.cards.size shouldEqual (originalSize - 1)
     }
 
     "not draw a card when the deck is empty" in {
@@ -38,7 +41,7 @@ class DeckSpec extends AnyWordSpec with Matchers {
       val updatedDeck = emptyDeck.draw()
 
       // Die Größe des Decks sollte unverändert bleiben
-      updatedDeck.cards.size shouldEqual 0
+      updatedDeck._2.cards.size shouldEqual 0
     }
 
     "produce the same shuffled deck with the same seed" in {
