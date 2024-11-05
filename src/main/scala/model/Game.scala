@@ -14,10 +14,8 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
            deck: Deck = this.deck,
            state: GameState = this.state): Game = Game(players, currentPlayer, deck, state)
   
-  def addPlayer(name: String): Game = 
-    val newPlayer = Player(name, Hand(List.empty))
-    println(colorize(s"Added player ${newPlayer.name}", ConsoleColors.BRIGHT_BLACK))
-    copy(players :+ newPlayer)
+  def addPlayer(name: String): Game =
+    copy(players :+ Player(name, Hand(List.empty)))
 
   def startGame(): Game = 
     copy(state = DISTRIBUTE)
@@ -34,15 +32,8 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
   def hit(): Game = 
     drawCard(players(currentPlayer), deck).evalIfDealer()
   
-  
   def stand(): Game = 
     copy(players, getNextPlayer).evalIfDealer()
-
-  def printHands(): Game = 
-    println()
-    for (player <- players) 
-      println(s"${player.name}: ${player.hand}")
-    this
   
   def getNextPlayer: Int = if (currentPlayer + 1 < players.length) 
     println(s"Next player: ${players(currentPlayer + 1).name}")
@@ -74,10 +65,8 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
       else 
         println("Dealer stands")
         game.copy(state = GameState.EVALUATE)
-    
 
     drawUntilStand(this)
-  
   
   def evalGame(): Game = 
     val dealer = players(0)

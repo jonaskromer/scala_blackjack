@@ -15,7 +15,7 @@ import scala.io.StdIn.readLine
 
   var input = ""
   
-  while (input != "exit") {
+  while (game.state != EXIT) {
 
     while (game.state == INIT) {
       println("\nType " + colorize("'add NAME'", ConsoleColors.BRIGHT_WHITE) + " to add a player or " + colorize("'start'", ConsoleColors.BRIGHT_WHITE) + " to start the game")
@@ -30,7 +30,7 @@ import scala.io.StdIn.readLine
           Thread.sleep(500)
         }
       }
-      gameState.printHands()
+      tui.processInput("printHands", gameState)
       game = gameState.copy(gameState.players, 1, gameState.deck, state = PLAYER) //skip dealer
     }
 
