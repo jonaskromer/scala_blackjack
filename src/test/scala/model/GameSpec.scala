@@ -1,11 +1,40 @@
-import model.GameState._
-import model._
-import org.scalatest.matchers.should.Matchers._
+import model.GameState.*
+import model.*
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+
+import java.io.{ByteArrayOutputStream, PrintStream}
 
 class GameSpec extends AnyWordSpec {
 
   "A Game" should {
+
+    "print an overbuy message when a player exceeds 21 points" in {
+      val overbuyingPlayer = Player("Alice", Hand(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Jack, Suit.Hearts), Card(Rank.Three, Suit.Spades))))
+      val otherPlayer = Player("Bob", Hand(List(Card(Rank.Two, Suit.Diamonds))))
+      val deck = Deck(List(Card(Rank.Four, Suit.Clubs)))
+      val game = Game(List(overbuyingPlayer, otherPlayer), 0, deck, DISTRIBUTE)
+
+      // Set up a ByteArrayOutputStream to capture the output
+      val outputCapture = new ByteArrayOutputStream()
+      Console.withOut(new PrintStream(outputCapture)) {
+        game.evalOverbuy(overbuyingPlayer)
+      }
+
+      // Convert the captured output to a string and verify the messages
+      val printedOutput = outputCapture.toString
+      printedOutput should include("Alice overbought!")
+      printedOutput should include("--------------------------------------")
+    }
+
+    "allow the current player to hit and draw a card" in {
+      val initialDeck = Deck(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Six, Suit.Hearts)))
+      val player = Player("Alice", Hand(List.empty))
+      val initialGame = Game(List(player), 0, initialDeck, DISTRIBUTE)
+      val gameAfterHit = initialGame.hit()
+
+      gameAfterHit.players.head.hand.cards should not be empty
+    }
 
     "start in the INIT state with only the dealer" in {
       val initialGame = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), INIT)
