@@ -11,81 +11,123 @@ class TUISpec extends AnyWordSpec {
 
   "The TUI" should {
 
-    "display a welcome message when the game starts" in {
-      val game = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), INIT)
+    "change state when game starts" in {
+      var game = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), INIT)
+
+      val tui = Tui()
+      game = tui.processInput("start", game)
+
+      game.state shouldBe DISTRIBUTE
+    }
+
+    "print help" in {
       val outputCapture = new ByteArrayOutputStream()
 
       Console.withOut(new PrintStream(outputCapture)) {
-        println("Welcome to Scala Blackjack!")
-        game.startGame() // Assuming startGame() might include some prints in the TUI
+        var game = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), INIT)
+        val tui = Tui()
+        game = tui.processInput("help", game)
       }
 
       val printedOutput = outputCapture.toString
-      printedOutput should include ("Welcome to Scala Blackjack!")
+      printedOutput should include("TODO")
     }
 
-    "display the player's action options after a card is drawn" in {
+    "return an emtpy game" in {
       val deck = Deck(List(Card(Rank.Five, Suit.Hearts), Card(Rank.Seven, Suit.Diamonds)))
       val player = Player("Alice", Hand(List.empty))
-      val game = Game(List(player), 0, deck, DISTRIBUTE)
-      val outputCapture = new ByteArrayOutputStream()
+      var game = Game(List(player), 0, deck, DISTRIBUTE)
+      val tui = Tui()
 
-      Console.withOut(new PrintStream(outputCapture)) {
-        val gameAfterHit = game.hit() // Assuming the TUI invokes hit() and shows output
-        println("Choose your action: (h)it or (s)tand")
-      }
+      game = tui.processInput("restart", game)
 
-      val printedOutput = outputCapture.toString
-      printedOutput should include ("Alice drew a Five")
-      printedOutput should include ("Remaining Cards:")
-      printedOutput should include ("Choose your action: (h)it or (s)tand")
+      game.state shouldBe INIT
+
     }
 
-    "display an overbuy message when a player exceeds 21 points" in {
-      val overbuyingPlayer = Player("Alice", Hand(List(Card(Rank.Ten, Suit.Spades), Card(Rank.Jack, Suit.Hearts), Card(Rank.Three, Suit.Diamonds))))
-      val otherPlayer = Player("Bob", Hand(List.empty))
+    "should add card to player hand" in {
+      val player = Player("Alice", Hand(List().empty))
       val deck = Deck(List(Card(Rank.Two, Suit.Clubs)))
-      val game = Game(List(overbuyingPlayer, otherPlayer), 0, deck, DISTRIBUTE)
-      val outputCapture = new ByteArrayOutputStream()
+      var game = Game(List(player), 0, deck, PLAYER)
+      val tui = Tui()
 
-      Console.withOut(new PrintStream(outputCapture)) {
-        game.evalOverbuy(overbuyingPlayer)
-      }
+      game = tui.processInput("hit", game)
 
-      val printedOutput = outputCapture.toString
-      printedOutput should include ("Alice overbought!")
-      printedOutput should include ("--------------------------------------")
-    }
+      game.players.head.hand.cards.size shouldBe 1
+  }
 
-    "prompt the dealer to take an action after players have finished" in {
+    "should go to next player" in {
       val deck = Deck(List(Card(Rank.Four, Suit.Spades), Card(Rank.Six, Suit.Diamonds), Card(Rank.Seven, Suit.Clubs)))
       val players = List(Player("Alice", Hand(List(Card(Rank.Five, Suit.Diamonds)))), Player("Bob", Hand(List(Card(Rank.Three, Suit.Hearts)))))
-      val game = Game(players, 1, deck, DISTRIBUTE)
+      var game = Game(players, 0, deck, PLAYER)
+      val tui = Tui()
+
+      game = tui.processInput("stand", game)
+
+      game.currentPlayer shouldBe 1
+    }
+
+    "print exit and change state" in {
+      val dealer = Player("DEALER", Hand(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Six, Suit.Spades))))
+      val player = Player("Alice", Hand(List(Card(Rank.Seven, Suit.Diamonds), Card(Rank.Three, Suit.Clubs))))
+      var game = Game(List(dealer, player), 0, Deck(List.empty).createShuffledDeck(), EVALUATE)
+      val tui = Tui()
+
+
       val outputCapture = new ByteArrayOutputStream()
 
       Console.withOut(new PrintStream(outputCapture)) {
-        game.stand() // Stand should trigger dealer's turn eventually
-        println("Dealer's turn")
+        game = tui.processInput("exit", game)
       }
 
       val printedOutput = outputCapture.toString
-      printedOutput should include ("Dealer's turn")
+      printedOutput should include ("Exiting game...")
+      game.state shouldBe EXIT
     }
 
-    "print the final results and winner(s) at the end of the game" in {
+    "nothing happens" in {
       val dealer = Player("DEALER", Hand(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Six, Suit.Spades))))
       val player = Player("Alice", Hand(List(Card(Rank.Seven, Suit.Diamonds), Card(Rank.Three, Suit.Clubs))))
       val game = Game(List(dealer, player), 0, Deck(List.empty).createShuffledDeck(), EVALUATE)
+      val tui = Tui()
+
+
+      val newGame = tui.processInput("", game)
+
+      newGame shouldBe game
+    }
+
+    "print hands" in {
+      val player = Player("Alice", Hand(List(Card(Rank.Seven, Suit.Diamonds), Card(Rank.Three, Suit.Clubs))))
+      var game = Game(List(player), 0, Deck(List.empty).createShuffledDeck(), EVALUATE)
+      val tui = Tui()
+
+
       val outputCapture = new ByteArrayOutputStream()
 
       Console.withOut(new PrintStream(outputCapture)) {
-        game.evalGame()
+        game = tui.processInput("printHands", game)
       }
 
       val printedOutput = outputCapture.toString
-      printedOutput should include ("Results:")
-      printedOutput should include ("Alice")
-      printedOutput should include ("Winners:")
+      printedOutput should include(s"${player.name}: ${player.hand}")
+    }
+
+    "add player" in {
+      val player = Player("Alice", Hand(List(Card(Rank.Seven, Suit.Diamonds), Card(Rank.Three, Suit.Clubs))))
+      var game = Game(List(player), 0, Deck(List.empty).createShuffledDeck(), EVALUATE)
+      val tui = Tui()
+
+
+      val outputCapture = new ByteArrayOutputStream()
+
+      Console.withOut(new PrintStream(outputCapture)) {
+        game = tui.processInput("add NEWPLAYER", game)
+      }
+
+      val printedOutput = outputCapture.toString
+      printedOutput should include("Added player NEWPLAYER")
+      game.players.length shouldBe 2
     }
   }
 }
