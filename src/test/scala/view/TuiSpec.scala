@@ -110,7 +110,9 @@ class TUISpec extends AnyWordSpec {
       }
 
       val printedOutput = outputCapture.toString
-      printedOutput should include(s"${player.name}: ${player.hand}")
+      val nameDotted = player.name + ": "
+      val formattedOutput = f"${nameDotted}%-15s${player.hand}"
+      printedOutput should include(formattedOutput)
     }
 
     "add player" in {

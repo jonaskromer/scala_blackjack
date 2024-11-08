@@ -23,9 +23,9 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
   def drawCard(player: Player, deck: Deck): Game = 
     val (drawnCard, remainingDeck) = deck.draw()
     val newPlayer = player.copy(hand = player.hand.addCard(drawnCard.get)) // TODO: handle None case
-    println(colorize(s"\n${newPlayer.name} drew a ${newPlayer.hand.cards.last}", ConsoleColors.BRIGHT_GREEN))
-    println(s"Remaining Cards: ${remainingDeck.cards.size}")
-    println("\n" + newPlayer.name + ": " + newPlayer.hand.toString)
+    println(colorize(s"\n${newPlayer.name} drew a ${newPlayer.hand.cards.last}", ConsoleColors.BRIGHT_BLUE))
+    println(colorize(s"Remaining Cards: ${remainingDeck.cards.size}", ConsoleColors.BRIGHT_BLACK))
+    printf("\n%-15s" + newPlayer.hand.toString, newPlayer.name + ": " )
     println(colorize("--------------------------------------", ConsoleColors.BRIGHT_BLACK))
     copy(players.map(p => if (p == player) newPlayer else p), evalOverbuy(newPlayer), remainingDeck)
 

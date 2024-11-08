@@ -34,7 +34,7 @@ class Tui {
       case "printHands" =>
         println()
         for (player <- game.players)
-          println(s"${player.name}: ${player.hand}")
+          printf(s"%-15s${player.hand}", player.name + ": " )
 
         game.copy()
 

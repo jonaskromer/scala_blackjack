@@ -19,5 +19,16 @@ case class Hand(cards: List[Card]):
 
     initialValue
 
-  override def toString: String =
-    colorize(s"Total Value: " + f"$totalValue%02d" + " | " + cards.mkString(", ") + "\n", ConsoleColors.BRIGHT_GREEN)
+  override def toString: String = {
+    val totalWidth = 20
+
+    val formattedCards = cards.map { card =>
+      val cardStr = card.toString
+      if (card.rank.value < 9) String.format(s"%-${totalWidth + 1}s", cardStr)
+      else String.format(s"%-${totalWidth}s", cardStr)
+    }
+
+    val cardString = formattedCards.mkString("| ")
+
+    colorize(s"Total Value: ${f"$totalValue%02d"} | $cardString\n", ConsoleColors.BRIGHT_GREEN)
+  }
