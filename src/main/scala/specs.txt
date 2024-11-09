@@ -1,0 +1,25 @@
+import scala.quoted.runtime.SplicedType
+
+deck:
+  rank: Ace, 2-10, Jack, Queen, King - 13
+  suit: Hearts, Diamonds, Clubs, Spades - 4 -> 52
+
+Dealer
+Player
+Draw pile
+
+Actions:
+  Hit
+  Stand
+  Double
+  Split
+
+Wallet:
+  Bet
+  Insert cash
+  Extract cash
+
+Win-Loose History
+
+
+Runde
