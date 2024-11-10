@@ -1,3 +1,5 @@
+package de.htwg.se.blackjack.model
+
 import de.htwg.se.blackjack.model.{Card, Hand, Rank, Suit}
 import de.htwg.se.blackjack.view.ConsoleColors
 import org.scalatest.wordspec.AnyWordSpec

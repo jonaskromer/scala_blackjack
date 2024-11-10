@@ -1,3 +1,5 @@
+package de.htwg.se.blackjack.model
+
 import de.htwg.se.blackjack.model.{Card, Deck, Game, Hand, Player, Rank, Suit}
 import model.*
 import org.scalatest.matchers.should.Matchers.*

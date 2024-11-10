@@ -1,3 +1,5 @@
+package de.htwg.se.blackjack.model
+
 import de.htwg.se.blackjack.model.{Card, Hand, Player, Rank, Suit}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers

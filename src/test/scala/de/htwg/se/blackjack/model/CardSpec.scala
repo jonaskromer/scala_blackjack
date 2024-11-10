@@ -1,4 +1,4 @@
-package model
+package de.htwg.se.blackjack.model
 
 import de.htwg.se.blackjack.model.{Card, Rank, Suit}
 import org.scalatest.matchers.should.Matchers

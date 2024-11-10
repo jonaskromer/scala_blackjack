@@ -1,10 +1,8 @@
-package view
+package de.htwg.se.blackjack.view
 
 import de.htwg.se.blackjack.model.{Card, Deck, Game, Hand, Player, Rank, Suit}
 import de.htwg.se.blackjack.view.Tui
 import org.scalatest.wordspec.AnyWordSpec
-import model.*
-import model.GameState.*
 import org.scalatest.matchers.should.Matchers.*
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, PrintStream}
