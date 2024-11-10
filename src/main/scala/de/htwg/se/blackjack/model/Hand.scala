@@ -28,4 +28,6 @@ case class Hand(cards: List[Card]):
 
     val cardString = formattedCards.mkString("| ")
 
+    if (cards.isEmpty) return colorize("Empty Hand\n", ConsoleColors.BRIGHT_GREEN)
+
     colorize(s"Total Value: ${f"$totalValue%02d"} | $cardString\n", ConsoleColors.BRIGHT_GREEN)

@@ -2,53 +2,78 @@ package de.htwg.se.blackjack.view
 
 import de.htwg.se.blackjack.control.Controller
 import de.htwg.se.blackjack.view.ConsoleColors.colorize
-import de.htwg.se.blackjack.model.state.{DealerState, DistributeState, EvaluateState, GameState, InitState, PlayerState}
+import de.htwg.se.blackjack.model.state.EvaluateState
 import de.htwg.se.blackjack.util.Observer
 
 class Tui(controller: Controller) extends Observer:
 
   controller.add(this)
 
+  private def invalidAction(action: String): Unit =
+    
+    println(colorize(s"Cannot $action in ${controller.game.state}", ConsoleColors.RED))
+
+  
   def processInput(input: String): Unit =
 
     val in = input.split(" ").toList
     
-    in(0) match
+    in.head match
 
       case "help" =>
-        println("TODO")
-      
+        println("Available commands:\n")
+        if (controller.game.state.canAddPlayer) println("add <name> <name> ... - add players")
+        if (controller.game.state.canStartGame()) println("start - start the game")
+        if (controller.game.state.canHit) println("hit - draw a card")
+        if (controller.game.state.canStand) println("stand - end turn")
+        println(
+        """|printHands - print all hands
+        |exit - exit the game
+        |help - show this help
+        |""".stripMargin)
+
+
       case "add" =>
-        if (!controller.game.state.isInstanceOf[InitState])
-          println(colorize("Cannot add player after game has started", ConsoleColors.RED))
+        if (!controller.game.state.canAddPlayer)
+          invalidAction("add player")
           return
 
-        println(colorize(s"Added player ${in(1)}", ConsoleColors.BRIGHT_BLACK))
-        controller.addPlayer(in(1))
+        val playerNames = in.drop(1)
+        if (playerNames.isEmpty)
+          println(colorize("Usage: add <name>", ConsoleColors.RED))
+          return
 
+        playerNames.foreach { name =>
+          println(colorize(s"Added player $name", ConsoleColors.BRIGHT_BLACK))
+          controller.addPlayer(name)
+          Thread.sleep(500)
+        }
+        
 
       case "start" =>
-        if (!controller.game.state.isInstanceOf[InitState])
-          println(colorize("Game has already started", ConsoleColors.RED))
+        if (controller.game.players.length == 1)
+          println(colorize("Add at least one player to start the game", ConsoleColors.RED))
+          return
+
+        if (!controller.game.state.canStartGame())
+          invalidAction("start game")
           return
 
         controller.startGame()
-        
-      case "restart" => 
+
+
+      case "restart" =>
         controller.restart()
 
-      case "hit" =>
-        if (controller.game.state.isInstanceOf[DistributeState] || controller.game.state.isInstanceOf[InitState])
-          println(colorize("Cannot hit before game has started", ConsoleColors.RED))
-          return
 
-        if (!controller.game.state.isInstanceOf[PlayerState])
-          println(colorize("Cannot hit", ConsoleColors.RED))
+      case "hit" =>
+        if (!controller.game.state.canHit)
+          invalidAction("hit")
           return
 
         val playerBeforeHit = controller.game.currentPlayer
+
         controller.hit()
-        controller.game.state.execute(controller)
 
         if (playerBeforeHit == controller.game.currentPlayer)
           println(s"${controller.game.players(controller.game.currentPlayer).name} drew a ${controller.game.players(controller.game.currentPlayer).hand.cards.last}")
@@ -56,34 +81,40 @@ class Tui(controller: Controller) extends Observer:
           println(s"${controller.game.players(playerBeforeHit).name} drew a ${controller.game.players(playerBeforeHit).hand.cards.last}")
           println(s"next player: ${controller.game.players(controller.game.currentPlayer).name}")
 
-      case "stand" =>
-        if (controller.game.state.isInstanceOf[DistributeState] || controller.game.state.isInstanceOf[InitState])
-          println(colorize("Cannot stand before game has started", ConsoleColors.RED))
-          return
 
-        if (!controller.game.state.isInstanceOf[PlayerState])
-          println(colorize("Cannot stand", ConsoleColors.RED))
+      case "stand" =>
+        if (!controller.game.state.canStand)
+          invalidAction("stand")
           return
 
         println(s"${controller.game.players(controller.game.currentPlayer).name} stands")
         println(s"next player: ${controller.game.players(controller.game.getNextPlayer).name}")
         controller.stand()
-        controller.game.state.execute(controller)
+
 
       case "printHands" =>
         println()
         for (player <- controller.game.players)
           printf(s"%-15s${player.hand}", player.name + ": " )
 
+
       case "exit" =>
         println("Exiting game...")
-      
-      case _ => 
 
 
+      case _ =>
+        println(colorize("Invalid command. Type 'help' for a list of commands", ConsoleColors.RED))
+
+
+  //TODO 
   override def update: Unit =
-    
-    if (controller.game.state.isInstanceOf[EvaluateState])
-      controller.game.state.execute(controller)
-      
-    println(controller.game)
+    controller.game.state match
+
+      case _: EvaluateState =>
+        println("Evaluating game state...")
+        controller.game.state.execute(controller)
+
+
+      case _ =>
+        println(controller.game)
+

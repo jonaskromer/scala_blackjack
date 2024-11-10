@@ -16,5 +16,13 @@ class DistributeState extends GameState:
     controller.game = controller.game.copy(currentPlayer = 1)
 
     controller.game = controller.game.copy(state = PlayerState())
-
-
+    
+  override def canAddPlayer: Boolean = false
+  
+  override def canStartGame(): Boolean = false
+  
+  override def canHit: Boolean = false
+  
+  override def canStand: Boolean = false
+  
+  override def toString: String = "distribute state"

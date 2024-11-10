@@ -2,7 +2,6 @@ package de.htwg.se.blackjack.model
 
 import scala.util.Random
 
-
 case class Deck(cards: List[Card]):
 
   def createShuffledDeck(seed: Option[Long] = None): Deck =

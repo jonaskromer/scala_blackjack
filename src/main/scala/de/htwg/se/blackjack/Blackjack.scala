@@ -7,7 +7,6 @@ import de.htwg.se.blackjack.model.state.InitState
 
 import scala.io.StdIn.readLine
 
-
 @main def main(): Unit =
 
   val game = Game(List.empty, 0, Deck(List.empty).createShuffledDeck(), InitState()).restart()

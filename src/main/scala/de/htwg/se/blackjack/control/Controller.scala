@@ -18,11 +18,13 @@ class Controller(var game: Game) extends Observable {
   
   def hit(): Unit = {
     game = game.hit()
+    game.state.execute(this)
     notifyObservers
   }
   
   def stand(): Unit = {
     game = game.stand()
+    game.state.execute(this)
     notifyObservers
   }
   
@@ -33,6 +35,7 @@ class Controller(var game: Game) extends Observable {
   
   def dealerDraw(): Unit = {
     game = game.dealerDraw()
+    game.state.execute(this)
     notifyObservers
   }
   
