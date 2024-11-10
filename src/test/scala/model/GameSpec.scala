@@ -1,5 +1,4 @@
 import de.htwg.se.blackjack.model.{Card, Deck, Game, Hand, Player, Rank, Suit}
-import de.htwg.se.blackjack.model.GameState.*
 import model.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec

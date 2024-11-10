@@ -1,6 +1,6 @@
 package de.htwg.se.blackjack.control
 
-import de.htwg.se.blackjack.model.Game
+import de.htwg.se.blackjack.model.{Game, Player}
 import de.htwg.se.blackjack.util.Observable
 
 class Controller(var game: Game) extends Observable {
@@ -12,6 +12,7 @@ class Controller(var game: Game) extends Observable {
   
   def startGame(): Unit = {
     game = game.startGame()
+    game.state.execute(this)
     notifyObservers
   }
   
@@ -37,6 +38,11 @@ class Controller(var game: Game) extends Observable {
   
   def evalGame(): Unit = {
     game = game.evalGame()
+    notifyObservers
+  }
+
+  def draw(player: Player): Unit = {
+    game = game.drawCard(player, game.deck)
     notifyObservers
   }
 

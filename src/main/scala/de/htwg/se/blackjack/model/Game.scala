@@ -1,6 +1,6 @@
 package de.htwg.se.blackjack.model
 
-import de.htwg.se.blackjack.model.GameState.*
+import de.htwg.se.blackjack.model.state.{DealerState, DistributeState, EvaluateState, FinishedState, GameState, InitState}
 
 import scala.annotation.tailrec
 
@@ -16,12 +16,13 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
     copy(players :+ Player(name, Hand(List.empty)))
 
   def startGame(): Game = 
-    copy(state = DISTRIBUTE)
+    copy(state = DistributeState())
 
   def drawCard(player: Player, deck: Deck): Game = 
     val (drawnCard, remainingDeck) = deck.draw()
     val newPlayer = player.copy(hand = player.hand.addCard(drawnCard.get)) // TODO: handle None case
     copy(players.map(p => if (p == player) newPlayer else p), evalOverbuy(newPlayer), remainingDeck)
+
 
   def hit(): Game = 
     drawCard(players(currentPlayer), deck).evalIfDealer()
@@ -40,7 +41,7 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
 
   def evalIfDealer(): Game = 
     if (currentPlayer == 0) 
-      copy(state = GameState.DEALER)
+      copy(state = DealerState())
     else 
       this
 
@@ -52,7 +53,7 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
         val updatedGame = game.drawCard(game.players(0), game.deck)
         drawUntilStand(updatedGame)
       else 
-        game.copy(state = GameState.EVALUATE)
+        game.copy(state = EvaluateState())
 
     drawUntilStand(this)
   
@@ -67,9 +68,18 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
     val winners = playerNames.zip(results).filter(_._2 == results.max).map(_._1)
     println(s"Results: ${playerNames.zip(results).mkString(", ")}")
     println(s"Winners: ${winners.mkString(", ")}")
-    copy(state = FINISHED)
+    copy(state = FinishedState())
 
   def restart(): Game = 
     val newDeck = Deck(List.empty).createShuffledDeck()
     val newPlayers = List(Player("DEALER", Hand(List.empty)))
-    Game(newPlayers, 0, newDeck, INIT)
+    Game(newPlayers, 0, newDeck, InitState())
+
+  override def toString: String =
+    "-----------------------------------------------------------------------------------------------------------\n" +
+    players.map(_.printHand).mkString("\n") + s"\nCurrent Player: ${players(currentPlayer).name}" +
+    "\n-----------------------------------------------------------------------------------------------------------\n"
+
+
+      
+      
