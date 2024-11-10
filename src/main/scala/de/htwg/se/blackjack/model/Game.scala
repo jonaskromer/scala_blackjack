@@ -1,13 +1,11 @@
-package model
+package de.htwg.se.blackjack.model
 
-import model.GameState.{DISTRIBUTE, FINISHED, INIT}
-import view.ConsoleColors
-import view.ConsoleColors._
+import de.htwg.se.blackjack.model.GameState.*
 
 import scala.annotation.tailrec
 
 
-case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: GameState) {
+case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: GameState):
   
   def copy(players: List[Player] = this.players,
            currentPlayer: Int = this.currentPlayer,
@@ -23,10 +21,6 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
   def drawCard(player: Player, deck: Deck): Game = 
     val (drawnCard, remainingDeck) = deck.draw()
     val newPlayer = player.copy(hand = player.hand.addCard(drawnCard.get)) // TODO: handle None case
-    println(colorize(s"\n${newPlayer.name} drew a ${newPlayer.hand.cards.last}", ConsoleColors.BRIGHT_BLUE))
-    println(colorize(s"Remaining Cards: ${remainingDeck.cards.size}", ConsoleColors.BRIGHT_BLACK))
-    printf("\n%-15s" + newPlayer.hand.toString, newPlayer.name + ": " )
-    println(colorize("--------------------------------------", ConsoleColors.BRIGHT_BLACK))
     copy(players.map(p => if (p == player) newPlayer else p), evalOverbuy(newPlayer), remainingDeck)
 
   def hit(): Game = 
@@ -36,21 +30,16 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
     copy(players, getNextPlayer).evalIfDealer()
   
   def getNextPlayer: Int = if (currentPlayer + 1 < players.length) 
-    println(s"Next player: ${players(currentPlayer + 1).name}")
     currentPlayer + 1
   else 0
 
   def evalOverbuy(player: Player): Int = 
-    if (player.hand.totalValue > 21) 
-      println(colorize(s"${player.name} overbought!", ConsoleColors.RED))
-      println(colorize("--------------------------------------\n", ConsoleColors.BRIGHT_BLACK))
+    if (player.hand.totalValue > 21)
       return getNextPlayer
-      
     currentPlayer
 
   def evalIfDealer(): Game = 
     if (currentPlayer == 0) 
-      println("Dealer's turn")
       copy(state = GameState.DEALER)
     else 
       this
@@ -63,7 +52,6 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
         val updatedGame = game.drawCard(game.players(0), game.deck)
         drawUntilStand(updatedGame)
       else 
-        println("Dealer stands")
         game.copy(state = GameState.EVALUATE)
 
     drawUntilStand(this)
@@ -85,5 +73,3 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
     val newDeck = Deck(List.empty).createShuffledDeck()
     val newPlayers = List(Player("DEALER", Hand(List.empty)))
     Game(newPlayers, 0, newDeck, INIT)
-
-}

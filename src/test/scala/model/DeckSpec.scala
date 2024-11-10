@@ -1,6 +1,6 @@
 package model
 
-import model.{Card, Deck, Rank, Suit}
+import de.htwg.se.blackjack.model.{Card, Deck, Rank, Suit}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

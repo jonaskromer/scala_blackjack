@@ -1,7 +1,7 @@
+import de.htwg.se.blackjack.model.{Card, Hand, Rank, Suit}
+import de.htwg.se.blackjack.view.ConsoleColors
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import model.{Hand, Card, Rank, Suit}
-import view.ConsoleColors
 
 class HandSpec extends AnyWordSpec with Matchers {
 

@@ -1,4 +1,4 @@
-package model
+package de.htwg.se.blackjack.model
 
 import scala.util.Random
 
@@ -20,7 +20,6 @@ case class Deck(cards: List[Card]):
   def draw(): (Option[Card], Deck) =
     cards match
       case Nil =>
-        println("No cards left!")
         (None, this)
       case head :: tail =>
         (Some(head), Deck(tail))

@@ -1,4 +1,4 @@
-package model
+package de.htwg.se.blackjack.model
 
 enum Suit:
   case Hearts, Diamonds, Clubs, Spades
