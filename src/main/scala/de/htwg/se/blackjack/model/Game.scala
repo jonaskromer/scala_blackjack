@@ -57,16 +57,18 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
     drawUntilStand(this)
 
   def evalGame(): Game =
-    val dealer = players(0)
-    val dealerValue = dealer.hand.totalValue
-    val playerValues = players.tail.map(p => p.hand.totalValue)
-    val playerNames = players.tail.map(p => p.name)
-    val playerResults = playerValues.map(v => if (v > 21) -1 else v)
-    val dealerResult = if (dealerValue > 21) -1 else dealerValue
-    val results = playerResults :+ dealerResult
-    val winners = playerNames.zip(results).filter(_._2 == results.max).map(_._1)
-    println(s"Results: ${playerNames.zip(results).mkString(", ")}")
-    println(s"Winners: ${winners.mkString(", ")}")
+
+    println("------\nTODO EVAL GAME\n------")
+//    val dealer = players(0)
+//    val dealerValue = dealer.hand.totalValue
+//    val playerValues = players.tail.map(p => p.hand.totalValue)
+//    val playerNames = players.tail.map(p => p.name)
+//    val playerResults = playerValues.map(v => if (v > 21) -1 else v)
+//    val dealerResult = if (dealerValue > 21) -1 else dealerValue
+//    val results = playerResults :+ dealerResult
+//    val winners = playerNames.zip(results).filter(_._2 == results.max).map(_._1)
+//    println(s"Results: ${playerNames.zip(results).mkString(", ")}")
+//    println(s"Winners: ${winners.mkString(", ")}")
     copy(state = FinishedState())
 
   def restart(): Game =
@@ -75,7 +77,7 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
     Game(newPlayers, 0, newDeck, InitState())
 
   override def toString: String =
-    "-----------------------------------------------------------------------------------------------------------\n" +
-    players.map(_.printHand).mkString("\n") + s"\nCurrent Player: ${players(currentPlayer).name}" +
-    "\n-----------------------------------------------------------------------------------------------------------\n"
+    "\n-----------------------------------------------------------------------------------------------------------\n" +
+    players.map(_.printHand).mkString("\n") +
+    "-----------------------------------------------------------------------------------------------------------"
 

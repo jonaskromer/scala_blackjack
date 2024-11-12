@@ -35,7 +35,7 @@ class Controller(var game: Game) extends Observable {
   
   def dealerDraw(): Unit = {
     game = game.dealerDraw()
-    game.state.execute(this)
+    game.state.execute(this) // evaluates
     notifyObservers
   }
   
