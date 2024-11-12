@@ -10,7 +10,6 @@ class Tui(controller: Controller) extends Observer:
   controller.add(this)
 
   private def invalidAction(action: String): Unit =
-    
     println(colorize(s"Cannot $action in ${controller.game.state}", ConsoleColors.RED))
 
   
@@ -19,7 +18,6 @@ class Tui(controller: Controller) extends Observer:
     val in = input.split(" ").toList
     
     in.head match
-
       case "help" =>
         println("Available commands:\n")
         if (controller.game.state.canAddPlayer) println("add <name> <name> ... - add players")
@@ -109,7 +107,6 @@ class Tui(controller: Controller) extends Observer:
   //TODO 
   override def update: Unit =
     controller.game.state match
-
       case _: PreInitState =>
         println("Welcome to BlackJack!")
         println("Type 'help' for a list of commands")
