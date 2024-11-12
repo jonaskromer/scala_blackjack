@@ -2,7 +2,7 @@ package de.htwg.se.blackjack.view
 
 import de.htwg.se.blackjack.control.Controller
 import de.htwg.se.blackjack.view.ConsoleColors.colorize
-import de.htwg.se.blackjack.model.state.{EvaluateState, FinishedState, PlayerState}
+import de.htwg.se.blackjack.model.state.{EvaluateState, FinishedState, PlayerState, PreInitState}
 import de.htwg.se.blackjack.util.Observer
 
 class Tui(controller: Controller) extends Observer:
@@ -109,6 +109,11 @@ class Tui(controller: Controller) extends Observer:
   //TODO 
   override def update: Unit =
     controller.game.state match
+
+      case _: PreInitState =>
+        println("Welcome to BlackJack!")
+        println("Type 'help' for a list of commands")
+        controller.game.state.execute(controller)
 
       case _: PlayerState =>
         println(controller.game)

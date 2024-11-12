@@ -29,14 +29,13 @@ class Controller(var game: Game) extends Observable {
   }
   
   def restart(): Unit = {
-    game = game.restart()
+    game = game.setup()
     notifyObservers
   }
   
   def dealerDraw(): Unit = {
     game = game.dealerDraw()
-    game.state.execute(this) // evaluates
-    notifyObservers
+    //notifyObservers
   }
   
   def evalGame(): Unit = {
@@ -46,6 +45,11 @@ class Controller(var game: Game) extends Observable {
 
   def draw(player: Player): Unit = {
     game = game.drawCard(player, game.deck)
+    notifyObservers
+  }
+  
+  def setup(): Unit = {
+    game = game.setup()
     notifyObservers
   }
 

@@ -1,6 +1,6 @@
 package de.htwg.se.blackjack.model
 
-import de.htwg.se.blackjack.model.state.{DealerState, DistributeState, EvaluateState, FinishedState, GameState, InitState}
+import de.htwg.se.blackjack.model.state.{DealerState, DistributeState, EvaluateState, FinishedState, GameState, InitState, PreInitState}
 
 import scala.annotation.tailrec
 
@@ -71,10 +71,10 @@ case class Game(players: List[Player], currentPlayer: Int, deck: Deck, state: Ga
 //    println(s"Winners: ${winners.mkString(", ")}")
     copy(state = FinishedState())
 
-  def restart(): Game =
+  def setup(): Game =
     val newDeck = Deck(List.empty).createShuffledDeck()
     val newPlayers = List(Player("DEALER", Hand(List.empty)))
-    Game(newPlayers, 0, newDeck, InitState())
+    Game(newPlayers, 0, newDeck, PreInitState())
 
   override def toString: String =
     "\n-----------------------------------------------------------------------------------------------------------\n" +

@@ -9,10 +9,11 @@ import scala.io.StdIn.readLine
 
 @main def main(): Unit =
 
-  val game = Game(List.empty, 0, Deck(List.empty).createShuffledDeck(), InitState()).restart()
+  val game = Game(List.empty, 0, Deck(List.empty).createShuffledDeck(), InitState())
   
   val controller = new Controller(game)
   val tui = new Tui(controller)
+  controller.setup()
 
   var input = ""
 
