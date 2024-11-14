@@ -3,7 +3,7 @@ package de.htwg.se.blackjack.model.state
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.se.blackjack.control.Controller
-import de.htwg.se.blackjack.model.{Game, Hand, Player}
+import de.htwg.se.blackjack.model.{Deck, Game, Hand, Player}
 
 class FinishedStateSpec extends AnyWordSpec with Matchers {
 
@@ -22,7 +22,7 @@ class FinishedStateSpec extends AnyWordSpec with Matchers {
       val state = FinishedState()
       // Set up a simple game with players
       val players = List(new Player("Player 1", Hand(List.empty)))
-      val game = Game(players = players, currentPlayer = 0, deck = null, state = state)
+      val game = Game(players = players, currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = state)
       val controller = new Controller(game)
 
       // Call execute on the FinishedState and check that the state doesn't change

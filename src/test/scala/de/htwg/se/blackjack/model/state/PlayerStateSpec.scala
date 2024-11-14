@@ -3,7 +3,7 @@ package de.htwg.se.blackjack.model.state
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.se.blackjack.control.Controller
-import de.htwg.se.blackjack.model.{Game, Hand, Player}
+import de.htwg.se.blackjack.model.{Deck, Game, Hand, Player}
 
 class PlayerStateSpec extends AnyWordSpec with Matchers {
 
@@ -21,7 +21,7 @@ class PlayerStateSpec extends AnyWordSpec with Matchers {
     "transition to DealerState when execute is called for the first player" in {
       val state = PlayerState()
       val players = List(Player("Player 1", Hand(List.empty)))
-      val game = Game(players = players, currentPlayer = 0, deck = null, state = state)
+      val game = Game(players = players, currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = state)
       val controller = new Controller(game)
 
       state.execute(controller)
@@ -34,7 +34,7 @@ class PlayerStateSpec extends AnyWordSpec with Matchers {
       val state = PlayerState()
 
       val players = List(Player("Player 1", Hand(List.empty)), Player("Player 2", Hand(List.empty)))
-      val game = Game(players = players, currentPlayer = 1, deck = null, state = state)
+      val game = Game(players = players, currentPlayer = 1, deck = Deck(List.empty).createShuffledDeck(), state = state)
       val controller = new Controller(game)
 
       state.execute(controller)
