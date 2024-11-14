@@ -32,7 +32,7 @@ class HandSpec extends AnyWordSpec with Matchers {
     }
 
     "display total value formatted with two digits and properly padded cards with emoji" in {
-      val hand = Hand(List(Card(Rank.Two, Suit.Clubs), Card(Rank.Three, Suit.Diamonds)))
+      val hand = Hand(List(Card(Rank.Two, Suit.Clubs), Card(Rank.Ten, Suit.Diamonds)))
       val expectedOutput = hand.toString
       hand.toString shouldEqual expectedOutput
     }

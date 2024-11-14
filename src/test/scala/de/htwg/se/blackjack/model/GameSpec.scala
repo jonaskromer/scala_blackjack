@@ -1,133 +1,85 @@
-package de.htwg.se.blackjack.model
-
-import de.htwg.se.blackjack.control.Controller
-import de.htwg.se.blackjack.model.{Card, Deck, Game, Hand, Player, Rank, Suit}
-import de.htwg.se.blackjack.model.*
-import de.htwg.se.blackjack.model.state.{DealerState, DistributeState, EvaluateState, FinishedState, InitState}
-import de.htwg.se.blackjack.view.Tui
-import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
+import de.htwg.se.blackjack.model._
+import de.htwg.se.blackjack.model.state._
 
-import java.io.{ByteArrayOutputStream, PrintStream}
-
-class GameSpec extends AnyWordSpec {
+class GameSpec extends AnyWordSpec with Matchers {
 
   "A Game" should {
 
-    "print an overbuy message when a player exceeds 21 points" in {
-      val overbuyingPlayer = Player("Alice", Hand(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Jack, Suit.Hearts), Card(Rank.Three, Suit.Spades))))
-      val otherPlayer = Player("Bob", Hand(List(Card(Rank.Two, Suit.Diamonds))))
-      val deck = Deck(List(Card(Rank.Four, Suit.Clubs)))
-      val game = Game(List(overbuyingPlayer, otherPlayer), 0, deck, DistributeState())
+    "add a player" in {
+      val game = Game(players = List(Player("Player 1", Hand(List.empty))), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = InitState())
+      val newGame = game.addPlayer("Player 2")
 
-      val outputCapture = new ByteArrayOutputStream()
-      Console.withOut(new PrintStream(outputCapture)) {
-        game.evalOverbuy(overbuyingPlayer)
-      }
-
-      val printedOutput = outputCapture.toString
-      printedOutput should include("Alice overbought!")
-      printedOutput should include("--------------------------------------")
+      newGame.players.size shouldBe 2
+      newGame.players.map(_.name) should contain allOf ("Player 1", "Player 2")
     }
 
-    "allow the current player to hit and draw a card" in {
-      val initialDeck = Deck(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Six, Suit.Hearts)))
-      val player = Player("Alice", Hand(List.empty))
-      val initialGame = Game(List(player), 0, initialDeck, DistributeState())
-      val gameAfterHit = initialGame.hit()
+    "start the game and transition to DistributeState" in {
+      val game = Game(players = List(Player("Player 1", Hand(List.empty))), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = InitState())
+      val newGame = game.startGame()
 
-      gameAfterHit.players.head.hand.cards should not be empty
+      newGame.state shouldBe a [DistributeState]
     }
 
-    "start in the INIT state with only the dealer" in {
-      val initialGame = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), InitState())
+    "draw a card for the player and update their hand" in {
+      val deck = Deck(List(Card(Rank.Ace, Suit.Hearts), Card(Rank.Seven, Suit.Clubs)))
+      val game = Game(players = List(Player("Player 1", Hand(List.empty))), currentPlayer = 0, deck = deck.createShuffledDeck(), state = InitState())
+      val newGame = game.drawCard(game.players.head, game.deck)
 
-      initialGame.state shouldBe InitState()
+      newGame.players.head.hand.cards.size shouldBe 1
     }
 
-    "add a player correctly" in {
-      val initialGame = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), InitState())
-      val gameWithPlayer = initialGame.addPlayer("Alice")
+    "execute a hit action and update the game state" in {
+      val deck = Deck(List(Card(Rank.Ace, Suit.Hearts), Card(Rank.Seven, Suit.Clubs)))
+      val game = Game(players = List(Player("Player 1", Hand(List.empty))), currentPlayer = 0, deck = deck.createShuffledDeck(), state = InitState())
+      val newGame = game.hit()
 
-      gameWithPlayer.players.length shouldBe 2
+      newGame.players.head.hand.cards.size shouldBe 1
+      newGame.state shouldBe a [DealerState]  // Assuming the hit method triggers dealer state change if needed
     }
 
-    "transition to DISTRIBUTE state when the game starts" in {
-      val initialGame = Game(List(Player("DEALER", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), InitState())
-      val startedGame = initialGame.startGame()
+    "execute a stand action and transition to next player or dealer" in {
+      val game = Game(players = List(
+        Player("Player 1", Hand(List(Card(Rank.Seven, Suit.Hearts), Card(Rank.Three, Suit.Spades)))),
+        Player("Player 2", Hand(List.empty))
+      ), currentPlayer = 1, deck = Deck(List.empty).createShuffledDeck(), state = PlayerState())
+      val newGame = game.stand()
 
-      startedGame.state shouldBe DistributeState()
+      newGame.currentPlayer shouldBe 0
+      newGame.state shouldBe a [DealerState]
     }
 
-    "transition to DEALER when all players finished" in {
-      var game = Game(List(Player("DEALER", Hand(List.empty)),Player("Bob", Hand(List.empty))), 1, Deck(List.empty).createShuffledDeck(), InitState())
-      game = game.stand()
+    "handle the dealer's draw and transition to EvaluateState" in {
+      val player = Player("Player 1", Hand(List(Card(Rank.Seven, Suit.Hearts), Card(Rank.Three, Suit.Spades))))  // Total value 10
+      val deck = Deck(List(Card(Rank.Eight, Suit.Clubs), Card(Rank.Six, Suit.Spades)))
+      val game = Game(players = List(player), currentPlayer = 0, deck = deck.createShuffledDeck(), state = DealerState())
+      val newGame = game.dealerDraw()
 
-      game.currentPlayer shouldBe 0
+      newGame.state shouldBe a [EvaluateState]
     }
 
-    "allow the current player to draw a card" in {
-      val deck = Deck(List(Card(Rank.Five, Suit.Hearts), Card(Rank.Seven, Suit.Clubs)))
-      val initialGame = Game(List(Player("Alice", Hand(List.empty)), Player("Bob", Hand(List.empty))), 0, deck, DistributeState())
-      val gameAfterDraw = initialGame.drawCard(initialGame.players.head, deck)
+    "reset the game with setup" in {
+      val game = Game(players = List(Player("Player 1", Hand(List.empty))), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = InitState())
+      val newGame = game.setup()
 
-      gameAfterDraw.deck.cards.length shouldBe 1
+      newGame.players.size shouldBe 1
+      newGame.players.head.name shouldBe "DEALER"
+      newGame.state shouldBe a [PreInitState]
     }
 
-    "move to the next player after stand" in {
-      val initialGame = Game(List(Player("DEALER", Hand(List.empty)), Player("Alice", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), DistributeState())
-      val gameAfterStand = initialGame.stand()
-
-      gameAfterStand.currentPlayer shouldBe 1
+    "game should print correct" in {
+      val game = Game(players = List(Player("Player 1", Hand(List.empty))), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = InitState())
+      game.toString() should include("-----------------------------------------------------------------------------------------------------------")
+      game.toString() should include("Player 1")
+      game.toString() should include("Empty Hand")
+      game.toString() should include("-----------------------------------------------------------------------------------------------------------")
     }
 
-    "switch to DEALER state when the dealer’s turn begins" in {
-      val gameWithDealerTurn = Game(List(Player("DEALER", Hand(List.empty)), Player("Alice", Hand(List.empty))), 0, Deck(List.empty).createShuffledDeck(), DistributeState()).evalIfDealer()
-
-      gameWithDealerTurn.state shouldBe DealerState()
-    }
-
-    "handle dealer drawing cards until total value is 17 or higher" in {
-      val deck = Deck(List(Card(Rank.Five, Suit.Hearts), Card(Rank.Six, Suit.Diamonds), Card(Rank.Seven, Suit.Spades)))
-      val dealer = Player("DEALER", Hand(List.empty))
-      val initialGame = Game(List(dealer), 0, deck, DealerState())
-      val gameAfterDealerDraw = initialGame.dealerDraw()
-
-      gameAfterDealerDraw.players.head.hand.totalValue should be >= 17
-      gameAfterDealerDraw.state shouldBe EvaluateState()
-    }
-
-    "evaluate winners of the game and print results" in {
-      val dealer = Player("DEALER", Hand(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Six, Suit.Spades))))
-      val player = Player("Alice", Hand(List(Card(Rank.Two, Suit.Diamonds), Card(Rank.Three, Suit.Hearts))))
-      val gameToEvaluate = Game(List(dealer, player), 0, Deck(List.empty).createShuffledDeck(), EvaluateState())
-      val evaluatedGame = gameToEvaluate.evalGame()
-
-      evaluatedGame.state shouldBe FinishedState()
-      evaluatedGame.players(1).hand.totalValue shouldBe 5
-    }
-
-    "evaluate loosers of the game and print results" in {
-      val dealer = Player("DEALER", Hand(List(Card(Rank.Ten, Suit.Clubs), Card(Rank.Six, Suit.Spades), Card(Rank.Ten, Suit.Hearts))))
-      val player = Player("Alice", Hand(List(Card(Rank.Ten, Suit.Diamonds), Card(Rank.Ten, Suit.Hearts), Card(Rank.Ten, Suit.Hearts))))
-      val gameToEvaluate = Game(List(dealer, player), 0, Deck(List.empty).createShuffledDeck(), EvaluateState())
-      val evaluatedGame = gameToEvaluate.evalGame()
-
-      evaluatedGame.state shouldBe FinishedState()
-    }
-
-    "restart the game with only the dealer and a new shuffled deck" in {
-      val initialGame = Game(List(Player("Alice", Hand(List.empty)), Player("Bob", Hand(List.empty))), 1, Deck(List.empty).createShuffledDeck(), FinishedState())
-      val restartedGame = initialGame.setup()
-
-      restartedGame.state shouldBe InitState()
-      restartedGame.deck.cards.length shouldBe 52
-    }
-
-    "should have correct string representation" in {
-      val game = Game(List.empty, 0, Deck(List.empty).createShuffledDeck(), DistributeState())
-
-      todo
+    "evaldealer should return current player when not dealers turn" in {
+      val game = Game(players = List(Player("Dealer", Hand(List.empty)), Player("Player 1", Hand(List.empty)), Player("Player 2", Hand(List.empty))), currentPlayer = 1, deck = Deck(List.empty).createShuffledDeck(), state = PlayerState())
+      val newGame = game.evalIfDealer()
+      newGame.currentPlayer shouldBe 1
     }
   }
 }

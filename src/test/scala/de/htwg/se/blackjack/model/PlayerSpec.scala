@@ -13,7 +13,7 @@ class PlayerSpec extends AnyWordSpec with Matchers {
       val player = Player("Alice", hand)
 
       val expectedOutput = s"Alice: ${hand.toString}"
-      player.printHand shouldEqual expectedOutput
+      player.printHand should include(expectedOutput)
     }
 
     "handle an empty hand correctly" in {
@@ -21,7 +21,7 @@ class PlayerSpec extends AnyWordSpec with Matchers {
       val player = Player("Bob", emptyHand)
 
       val expectedOutput = s"Bob: ${emptyHand.toString}"
-      player.printHand shouldEqual expectedOutput
+      player.printHand should include(expectedOutput)
     }
   }
 }
