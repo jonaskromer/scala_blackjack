@@ -3,7 +3,7 @@ package de.htwg.se.blackjack.model.state
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.se.blackjack.control.Controller
-import de.htwg.se.blackjack.model.Game
+import de.htwg.se.blackjack.model.{Deck, Game}
 
 class InitStateSpec extends AnyWordSpec with Matchers {
 
@@ -21,7 +21,7 @@ class InitStateSpec extends AnyWordSpec with Matchers {
     "perform no actions when execute is called" in {
       val state = InitState()
       // Set up a game and controller instance with InitState
-      val game = Game(players = List.empty, currentPlayer = 0, deck = null, state = state)
+      val game = Game(players = List.empty, currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = state)
       val controller = new Controller(game)
 
       // Call execute on InitState and verify no state changes occur

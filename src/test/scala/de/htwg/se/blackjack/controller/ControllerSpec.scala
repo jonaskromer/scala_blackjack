@@ -1,6 +1,7 @@
 package de.htwg.se.blackjack.controller
 
 import de.htwg.se.blackjack.control.Controller
+import de.htwg.se.blackjack.model.state.{EvaluateState, InitState, PlayerState, PreInitState}
 import de.htwg.se.blackjack.model.{Deck, Game, Hand, Player}
 import de.htwg.se.blackjack.util.Observer
 import org.scalatest.wordspec.AnyWordSpec
@@ -17,7 +18,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(), currentPlayer = 0, deck = null, state = null)
+      val game = Game(players = List(), currentPlayer = 0, deck = null, state = InitState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -39,7 +40,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = InitState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -60,7 +61,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = PlayerState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -80,7 +81,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = PlayerState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -100,7 +101,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = InitState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -117,7 +118,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
     "execute dealer draw without notifying observers" in {
       val player = Player("Player 1", Hand(List().empty))
       val dealer = Player("Dealer", Hand(List().empty))
-      val game = Game(players = List(dealer, player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(dealer, player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = PlayerState())
       val controller = new Controller(game)
 
       // Call dealer draw
@@ -134,7 +135,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = EvaluateState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -154,7 +155,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = PlayerState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
@@ -174,7 +175,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       val player = new Player("Player 1", Hand(List()))
-      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = null)
+      val game = Game(players = List(player), currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = PreInitState())
       val controller = new Controller(game)
 
       // Add the observer to the controller
