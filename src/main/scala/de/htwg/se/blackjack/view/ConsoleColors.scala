@@ -1,6 +1,6 @@
-package view
+package de.htwg.se.blackjack.view
 
-object ConsoleColors {
+object ConsoleColors:
   // Reset
   val RESET = "\u001b[0m"
 
@@ -46,4 +46,3 @@ object ConsoleColors {
 
   // Utility function to colorize text
   def colorize(text: String, color: String): String = s"$color$text$RESET"
-}
