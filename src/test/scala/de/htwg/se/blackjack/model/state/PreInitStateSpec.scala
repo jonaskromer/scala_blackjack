@@ -4,7 +4,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import de.htwg.se.blackjack.model.state.{GameState, InitState, PreInitState}
 import de.htwg.se.blackjack.control.Controller
-import de.htwg.se.blackjack.model.Game
+import de.htwg.se.blackjack.model.{Deck, Game}
 
 class PreInitStateSpec extends AnyWordSpec with Matchers {
 
@@ -22,7 +22,7 @@ class PreInitStateSpec extends AnyWordSpec with Matchers {
     "transition to InitState when execute is called" in {
       val state = PreInitState()
       // Set up a game and controller instance with PreInitState
-      val game = Game(players = List.empty, currentPlayer = 0, deck = null, state = state)
+      val game = Game(players = List.empty, currentPlayer = 0, deck = Deck(List.empty).createShuffledDeck(), state = state)
       val controller = new Controller(game)
 
       // Call execute on PreInitState and check that the game state changes to InitState

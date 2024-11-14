@@ -1,3 +1,13 @@
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonaskromer/blackjack/scala.yml)
+[![Coverage Status](https://coveralls.io/repos/github/jonaskromer/scala_blackjack/badge.svg?branch=main)](https://coveralls.io/github/jonaskromer/scala_blackjack?branch=main)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a763862828324668b0efcc22ba398b5c)](https://app.codacy.com/gh/jonaskromer/blackjack/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/jonaskromer/blackjack)
+![GitHub last commit](https://img.shields.io/github/last-commit/jonaskromer/blackjack)
+![Github Created At](https://img.shields.io/github/created-at/jonaskromer/blackjack)
+![GitHub license](https://img.shields.io/github/license/jonaskromer/blackjack)
+
+---
+
 # Blackjack
 
 ![Blackjack Logo](assets/banner1.jpg)
