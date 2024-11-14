@@ -1,7 +1,9 @@
+package de.htwg.se.blackjack.model
+
+import de.htwg.se.blackjack.model.{Card, Hand, Rank, Suit}
+import de.htwg.se.blackjack.view.ConsoleColors
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
-import model.{Hand, Card, Rank, Suit}
-import view.ConsoleColors
 
 class HandSpec extends AnyWordSpec with Matchers {
 
@@ -30,7 +32,7 @@ class HandSpec extends AnyWordSpec with Matchers {
     }
 
     "display total value formatted with two digits and properly padded cards with emoji" in {
-      val hand = Hand(List(Card(Rank.Two, Suit.Clubs), Card(Rank.Three, Suit.Diamonds)))
+      val hand = Hand(List(Card(Rank.Two, Suit.Clubs), Card(Rank.Ten, Suit.Diamonds)))
       val expectedOutput = hand.toString
       hand.toString shouldEqual expectedOutput
     }
