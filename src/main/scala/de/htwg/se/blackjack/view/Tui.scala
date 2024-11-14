@@ -28,6 +28,7 @@ class Tui(controller: Controller) extends Observer:
         """|printHands - print all hands
         |exit - exit the game
         |help - show this help
+        |restart - restart the game
         |""".stripMargin)
 
 
@@ -104,11 +105,11 @@ class Tui(controller: Controller) extends Observer:
         println(colorize("Invalid command. Type 'help' for a list of commands", ConsoleColors.RED))
 
 
-  //TODO 
   override def update: Unit =
     controller.game.state match
       case _: PreInitState =>
         println("Welcome to BlackJack!")
+        println("Start by adding players via add <name> <name> ...")
         println("Type 'help' for a list of commands")
         controller.game.state.execute(controller)
 
