@@ -12,53 +12,61 @@ class Tui(controller: Controller) extends Observer:
   private def invalidAction(action: String): Unit =
     println(colorize(s"Cannot $action in ${controller.game.state}", ConsoleColors.RED))
 
-  
+  def getHelpString(controller: Controller): String = {
+    val commands = List(
+      Some("Available commands:\n"),
+      if (controller.game.state.canAddPlayer) Some("add <name> <name> ... - add players") else None,
+      if (controller.game.state.canStartGame()) Some("start - start the game") else None,
+      if (controller.game.state.canHit) Some("hit - draw a card") else None,
+      if (controller.game.state.canStand) Some("stand - end turn") else None,
+      Some(
+        """|printHands - print all hands
+           |exit - exit the game
+           |help - show this help
+           |restart - restart the game
+           |""".stripMargin
+      )
+    )
+
+    commands.flatten.mkString("\n")
+  }
+
+
   def processInput(input: String): Unit =
 
     val in = input.split(" ").toList
     
     in.head match
       case "help" =>
-        println("Available commands:\n")
-        if (controller.game.state.canAddPlayer) println("add <name> <name> ... - add players")
-        if (controller.game.state.canStartGame()) println("start - start the game")
-        if (controller.game.state.canHit) println("hit - draw a card")
-        if (controller.game.state.canStand) println("stand - end turn")
-        println(
-        """|printHands - print all hands
-        |exit - exit the game
-        |help - show this help
-        |restart - restart the game
-        |""".stripMargin)
+        val helpString = getHelpString(controller)
+        println(helpString)
 
 
       case "add" =>
         if (!controller.game.state.canAddPlayer)
           invalidAction("add player")
-          return
+          else
 
-        val playerNames = in.drop(1)
-        if (playerNames.isEmpty)
-          println(colorize("Usage: add <name>", ConsoleColors.RED))
-          return
+          val playerNames = in.drop(1)
+          if (playerNames.isEmpty)
+            println(colorize("Usage: add <name>", ConsoleColors.RED))
+            else
 
-        playerNames.foreach { name =>
-          println(colorize(s"Added player $name", ConsoleColors.BRIGHT_BLACK))
-          controller.addPlayer(name)
-          Thread.sleep(500)
-        }
+            playerNames.foreach { name =>
+              println(colorize(s"Added player $name", ConsoleColors.BRIGHT_BLACK))
+              controller.addPlayer(name)
+              Thread.sleep(500)
+            }
         
 
       case "start" =>
         if (controller.game.players.length == 1)
           println(colorize("Add at least one player to start the game", ConsoleColors.RED))
-          return
+          else
 
-        if (!controller.game.state.canStartGame())
-          invalidAction("start game")
-          return
-
-        controller.startGame()
+          if (!controller.game.state.canStartGame())
+            invalidAction("start game")
+            else controller.startGame()
 
 
       case "restart" =>
@@ -68,27 +76,26 @@ class Tui(controller: Controller) extends Observer:
       case "hit" =>
         if (!controller.game.state.canHit)
           invalidAction("hit")
-          return
-
-        val playerBeforeHit = controller.game.currentPlayer
-
-        controller.hit()
-
-        if (playerBeforeHit == controller.game.currentPlayer)
-          println(s"${controller.game.players(controller.game.currentPlayer).name} drew a ${controller.game.players(controller.game.currentPlayer).hand.cards.last}")
         else
-          println(s"${controller.game.players(playerBeforeHit).name} drew a ${controller.game.players(playerBeforeHit).hand.cards.last}")
-          println(s"next player: ${controller.game.players(controller.game.currentPlayer).name}")
+
+          val playerBeforeHit = controller.game.currentPlayer
+          controller.hit()
+
+          if (playerBeforeHit == controller.game.currentPlayer)
+            println(s"${controller.game.players(controller.game.currentPlayer).name} drew a ${controller.game.players(controller.game.currentPlayer).hand.cards.last}")
+            else
+            println(s"${controller.game.players(playerBeforeHit).name} drew a ${controller.game.players(playerBeforeHit).hand.cards.last}")
+            println(s"next player: ${controller.game.players(controller.game.currentPlayer).name}")
 
 
       case "stand" =>
         if (!controller.game.state.canStand)
           invalidAction("stand")
-          return
+        else
 
-        println(s"${controller.game.players(controller.game.currentPlayer).name} stands")
-        println(s"next player: ${controller.game.players(controller.game.getNextPlayer).name}")
-        controller.stand()
+          println(s"${controller.game.players(controller.game.currentPlayer).name} stands")
+          println(s"next player: ${controller.game.players(controller.game.getNextPlayer).name}")
+          controller.stand()
 
 
       case "printHands" =>
